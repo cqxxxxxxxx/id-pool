@@ -8,12 +8,12 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class DatasourceIdSegmentLoader extends AbstractIdSegmentLoader {
+public class DataSourceIdSegmentLoader extends AbstractIdSegmentLoader {
     private static final String SELECT_SQL = "select * from id_pool where biz = ?";
     private static final String UPDATE_SQL = "update id_pool set id_cur = ? where biz = ? and id_cur = ?";
     private DataSource dataSource;
 
-    public DatasourceIdSegmentLoader(DataSource dataSource) {
+    public DataSourceIdSegmentLoader(DataSource dataSource) {
         this.dataSource = dataSource;
     }
 
