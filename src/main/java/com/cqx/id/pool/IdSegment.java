@@ -60,6 +60,7 @@ public class IdSegment<T> {
         long r = curId.getAndIncrement();
         if (r >= maxId) {
             if (nextSegment == null) {
+                //超过最大值，即时抛出异常，止损
                 throw new IllegalStateException("biz [" + biz + "] id overflow and next segment not ready. [" + curId + "," + maxId + ")");
             } else {
                 IdPool.rollToNextSegment(biz, this);

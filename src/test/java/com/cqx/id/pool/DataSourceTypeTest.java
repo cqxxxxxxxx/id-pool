@@ -13,12 +13,9 @@ public class DataSourceTypeTest {
     @Test
     public void test0() {
         MysqlDataSource dataSource = new MysqlDataSource();
-        Properties properties = new Properties();
-        properties.setProperty("host", "124.70.178.185");
-        properties.setProperty("port", "3306");
-        properties.setProperty("user", "root");
-        properties.setProperty("password", "123456");
-        dataSource.initializeProperties(properties);
+        dataSource.setUrl("jdbc:mysql://127.0.0.1:3306/discount?characterEncoding=UTF-8&useUnicode=true&useSSL=false&serverTimezone=GMT%2B8");
+        dataSource.setUser("root");
+        dataSource.setPassword("123456");
         DataSourceIdSegmentLoader segmentLoader = new DataSourceIdSegmentLoader(dataSource);
         List<String> bizList = new ArrayList<>();
         bizList.add("test");

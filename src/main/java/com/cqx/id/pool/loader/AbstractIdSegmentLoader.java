@@ -22,8 +22,14 @@ public abstract class AbstractIdSegmentLoader implements IdSegmentLoader {
         try {
             while (true) {
                 IdPoolEntity entity = loadSegment(biz);
+                if (entity.getIdCur() > entity.getIdMax()) {
+                    throw new IllegalStateException("reached id max threshold. id_cur[" + entity.getIdCur() + "] id_max[" + entity.getIdMax() + "]");
+                }
                 long expectId = entity.getIdCur();
                 long updateId = entity.getCacheSize() + entity.getIdCur();
+                if (updateId > entity.getIdMax()) {
+                    updateId = entity.getIdMax();
+                }
                 boolean updated = updateSegment(biz, expectId, updateId);
                 if (updated) {
                     IdSegment idSegment = IdSegment.builder()
@@ -31,7 +37,7 @@ public abstract class AbstractIdSegmentLoader implements IdSegmentLoader {
                             .curId(new AtomicLong(expectId))
                             .size(entity.getCacheSize())
                             .maxId(updateId)
-                            .threshold(entity.getIdCur() + entity.getCacheSize() >> 1)
+                            .threshold(entity.getIdCur() + Double.valueOf(entity.getCacheSize() * entity.getLoadFactor()).longValue())
                             .nextSegment(null)
                             .loader(this)
                             .idWrapper(wrapperStrategy(entity.getStrategy()))
@@ -40,10 +46,9 @@ public abstract class AbstractIdSegmentLoader implements IdSegmentLoader {
                 }
             }
         } catch (Exception e) {
-            //todo retry?
             log.error(e.getMessage(), e);
-            throw new IllegalStateException(e);
         }
+        return null;
     }
 
     private IdWrapperStrategy wrapperStrategy(String strategyClass) {
